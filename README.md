@@ -54,9 +54,38 @@ Next make sure you are in your virtual env by running ```pipenv shell``` and now
 
 You should see: Hello world, this is flask at http://127.0.0.1:8000, and if so everything is working locally so you can move to the next step.
 
+4. Make your Dockerfile and build it
 
+Create a file called Dockerfile and add the following:
+```Dockerfile
+# Base Image
+FROM python:3.7
 
+RUN mkdir /app
+WORKDIR /app
 
+ADD . /app
+
+ENV PYTHONUNBUFFERED 1
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN pip3 install --upgrade pip
+RUN pip3 install pipenv
+
+RUN pipenv install --skip-lock --system --dev
+
+CMD gunicorn run:app --bind 0.0.0.0:$PORT
+
+```
+
+You can make another file called build.sh and add the build command to it:
+
+```bash
+docker build -t flask-app -f Dockerfile .
+```
+
+After this you can ```./build.sh``` in the terminal
 
 
 
