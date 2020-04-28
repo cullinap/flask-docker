@@ -75,7 +75,7 @@ RUN pip3 install pipenv
 
 RUN pipenv install --skip-lock --system --dev
 
-CMD gunicorn run:app --bind 0.0.0.0:$PORT
+CMD gunicorn my_app.wsgi:app --bind 0.0.0.0:$PORT
 
 ```
 
@@ -87,12 +87,40 @@ docker build -t flask-app -f Dockerfile .
 
 After this you can ```./build.sh``` in the terminal
 
+5. deploy to heroku
 
+make sure you are logged into heroku as well as the container service
 
+```bash
+heroku login
+heroku container:login
+```
 
+now create you heroku project
 
+```
+heroku create
+```
 
+get the name of the app that was generated for you and push it
 
+```
+heroku container:push web --app APPNAME
+```
+
+release your heroku app:
+
+```
+heroku container:release web --app APPNAME
+```
+
+and finally open it...
+
+```
+heroku open --app APPNAME
+```
+
+Super important to remember to make sure that your docker file CMD must be in sync with the command that was created in run.sh. If you don't do this heroku can't assign the proper port and you will get an application error on deployment. For example I ran ```CMD gunicorn my_app:app --bind 0.0.0.0:$PORT``` previously and omitted the .wsgi between my_app and app. The correct code is: ```CMD gunicorn my_app.wsgi:app --bind 0.0.0.0:$PORT```. Also worth noting is that I made a file called deploy.sh that combined docker build, heroku continer push and release to make it easier to update my app. 
 
 
 

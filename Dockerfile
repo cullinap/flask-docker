@@ -14,4 +14,4 @@ RUN pip3 install pipenv
 
 RUN pipenv install --skip-lock --system --dev
 
-CMD gunicorn run:app --bind 0.0.0.0:$PORT
+CMD gunicorn my_app.wsgi:app --bind 0.0.0.0:$PORT
